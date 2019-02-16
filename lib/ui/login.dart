@@ -13,51 +13,80 @@ class LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    int checkid = 0;
+    int checkpassword = 0;
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Custom form"),
-      ),
       body: Form(
         key: _formkey,
         child: ListView(
+          shrinkWrap: true,
+          padding: EdgeInsets.only(left: 20.0, right: 20.0, top: 50.0),
           children: <Widget>[
             Image.asset(
-              "resources/Tulips.jpg",
+              "resources/Chino76.jpg",
             ),
             TextFormField(
               decoration: InputDecoration(
-                labelText: "Email",
-                hintText: "Please input your email",
-                icon: Icon(Icons.email),
+                labelText: "User id",
+                hintText: "User id",
+                icon: Icon(Icons.person),
               ),
               keyboardType: TextInputType.emailAddress,
               onSaved: (value) => print(value),
               validator: (value){
                 if(value.isEmpty){
-                  return "Please input value";
+                  checkid = 1;
+                  return "";
+                }else if(value != 'admin'){
+                  checkid = 2;
+                  return "";
                 }
               },
             ),
             TextFormField(
               decoration: InputDecoration(
                 labelText: "Password",
-                hintText: "Please input password",
+                hintText: "Password",
                 icon: Icon(Icons.lock,)
               ),
               keyboardType: TextInputType.text,
               obscureText: true,
               validator: (value){
                 if(value.isEmpty){
-                  return "Please input value";
+                  checkpassword = 1;
+                  return "";
+                }else if(value != 'admin'){
+                  checkpassword = 2;
+                  return "";
                 }
               },
             ),
-            RaisedButton(
-              child: Text("Continue"),
+            Builder(builder: (context) => RaisedButton(
+              child: Text('Continue'),
               onPressed: () {
-                _formkey.currentState.validate();
+                if(_formkey.currentState.validate()){
+                  checkid = 0;
+                  checkpassword = 0;
+                  Navigator.pushNamed(context, "/main");
+                }else if(checkid == 1 || checkpassword == 1){
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('กรุณาระบุ user or password'),
+                  duration: Duration(seconds: 3),));
+                }
+                else{
+                  Scaffold.of(context).showSnackBar(SnackBar(
+                  content: Text('user or password ไม่ถูกต้อง'),
+                  duration: Duration(seconds: 3),));
+                }
+              }),
+            ),
+            FlatButton(
+              child: Text('Register New Account'),
+              padding: EdgeInsets.only(left: 220),
+              onPressed: () {
+                Navigator.pushNamed(context, "/register");
               },
-            )
+              )
           ],
         ),
       ),
